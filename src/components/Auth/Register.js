@@ -8,7 +8,8 @@ class Register extends Component {
         email: "",
         password: "",
         passwordConfirmation: "",
-        errors: []
+        errors: [],
+        loading: false
     }
 
     handleChange = event => {
@@ -45,23 +46,30 @@ class Register extends Component {
         }
     }
     handleSubmit = event => {
+        event.preventDefault()
         if (this.isFormValid()) {
-            event.preventDefault()
+            this.setState({ errors: [], loading: true })
             firebase
                 .auth()
                 .createUserWithEmailAndPassword(this.state.email, this.state.password)
                 .then(createdUser => {
                     console.log(createdUser)
+                    this.setState({ loading: false })
                 })
                 .catch(err => {
                     console.log(err)
+                    this.setState({ errors: this.state.errors.concat(err), loading: false })
                 })
         }
     }
 
     displayErrors = errors => errors.map((error, index) => <p key={index}>{error.message}</p>)
+
+    handleInputError = (errors, inputName) => {
+        return errors.some(error => error.message.toLowerCase().includes(inputName)) ? "error" : ""
+    }
     render() {
-        const { username, email, password, passwordConfirmation, errors } = this.state
+        const { username, email, password, passwordConfirmation, errors, loading } = this.state
         return (
             <Grid textAlign='center' verticalAlign='middle' className='app'>
                 <Grid.Column style={{ maxWidth: 500 }}>
@@ -90,6 +98,7 @@ class Register extends Component {
                                 iconPosition='left'
                                 placeholder='Email Address'
                                 onChange={this.handleChange}
+                                className={this.handleInputError(errors,'email')}
                                 value={email}
                                 type='email'
                             />
@@ -101,6 +110,7 @@ class Register extends Component {
                                 iconPosition='left'
                                 placeholder='Password'
                                 onChange={this.handleChange}
+                                className={this.handleInputError(errors,'password')}
                                 value={password}
                                 type='password'
                             />
@@ -112,11 +122,12 @@ class Register extends Component {
                                 iconPosition='left'
                                 placeholder='Password Confirmation'
                                 onChange={this.handleChange}
+                                className={this.handleInputError(errors,'password')}
                                 value={passwordConfirmation}
                                 type='password'
                             />
 
-                            <Button color='orange' fluid size='large'>
+                            <Button disabled={loading} className={loading ? "loading" : ""} color='orange' fluid size='large'>
                                 Submit
                             </Button>
                         </Segment>
