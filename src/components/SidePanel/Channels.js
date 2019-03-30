@@ -12,7 +12,7 @@ class Channels extends Component {
 
     openModal = () => this.setState({ modal: true })
 
-    handleChange = (event)=> {
+    handleChange = event => {
         console.log(event.target.name)
         this.setState({ [event.target.name]: event.target.value })
     }
@@ -37,7 +37,7 @@ class Channels extends Component {
                         <Form>
                             <Form.Field>
                                 <Input fluid label='Name of Channel' name='channelName' onChange={this.handleChange} />
-<br/>
+                                <br />
                                 <Input fluid label='About the Channel' name='channelDetails' onChange={this.handleChange} />
                             </Form.Field>
                         </Form>
@@ -48,8 +48,8 @@ class Channels extends Component {
                             Add
                         </Button>
 
-                        <Button color='red' inverted  onClick={this.closeModal}>
-                            <Icon name='remove'/>
+                        <Button color='red' inverted onClick={this.closeModal}>
+                            <Icon name='remove' />
                             Cancel
                         </Button>
                     </Modal.Actions>
