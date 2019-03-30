@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { Grid, Form, Segment, Button, Header, Message, Icon } from "semantic-ui-react"
 import { Link } from "react-router-dom"
 import firebase from "../../firebase"
+import md5 from "md5"
 class Register extends Component {
     state = {
         username: "",
@@ -9,7 +10,8 @@ class Register extends Component {
         password: "",
         passwordConfirmation: "",
         errors: [],
-        loading: false
+        loading: false,
+        userRef: firebase.database().ref("users")
     }
 
     handleChange = event => {
@@ -53,8 +55,21 @@ class Register extends Component {
                 .auth()
                 .createUserWithEmailAndPassword(this.state.email, this.state.password)
                 .then(createdUser => {
-                    console.log(createdUser)
-                    this.setState({ loading: false })
+                    createdUser.user
+                        .updateProfile({
+                            displayName: this.state.username,
+                            photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
+                        })
+                        .then(() => {
+                            this.saveUser(createdUser).then(() => {
+                                console.log("user saved")
+                                this.setState({ loading: false })
+                            })
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            this.setState({ errors: this.state.errors.concat(err), loading: false })
+                        })
                 })
                 .catch(err => {
                     console.log(err)
@@ -63,6 +78,12 @@ class Register extends Component {
         }
     }
 
+    saveUser = createdUser => {
+        return this.state.userRef.child(createdUser.user.uid).set({
+            name: createdUser.user.displayName,
+            avatar: createdUser.user.photoURL
+        })
+    }
     displayErrors = errors => errors.map((error, index) => <p key={index}>{error.message}</p>)
 
     handleInputError = (errors, inputName) => {
@@ -73,7 +94,7 @@ class Register extends Component {
         return (
             <Grid textAlign='center' verticalAlign='middle' className='app'>
                 <Grid.Column style={{ maxWidth: 500 }}>
-                    <Header as='h2' icon color='orange' textAlign='center'>
+                    <Header as='h1' icon color='orange' textAlign='center'>
                         <Icon name='puzzle piece' color='orange' />
                         Register for DevChat
                     </Header>
@@ -98,7 +119,7 @@ class Register extends Component {
                                 iconPosition='left'
                                 placeholder='Email Address'
                                 onChange={this.handleChange}
-                                className={this.handleInputError(errors,'email')}
+                                className={this.handleInputError(errors, "email")}
                                 value={email}
                                 type='email'
                             />
@@ -110,7 +131,7 @@ class Register extends Component {
                                 iconPosition='left'
                                 placeholder='Password'
                                 onChange={this.handleChange}
-                                className={this.handleInputError(errors,'password')}
+                                className={this.handleInputError(errors, "password")}
                                 value={password}
                                 type='password'
                             />
@@ -122,7 +143,7 @@ class Register extends Component {
                                 iconPosition='left'
                                 placeholder='Password Confirmation'
                                 onChange={this.handleChange}
-                                className={this.handleInputError(errors,'password')}
+                                className={this.handleInputError(errors, "password")}
                                 value={passwordConfirmation}
                                 type='password'
                             />
