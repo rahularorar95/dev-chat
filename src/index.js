@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import App from "./components/App"
-import Spinner from './components/Spinner'
+import Spinner from "./components/Spinner"
 import "semantic-ui-css/semantic.min.css"
 import { Router, Route, Switch } from "react-router-dom"
 import Register from "./components/Auth/Register"
@@ -12,7 +12,7 @@ import { createStore } from "redux"
 import { Provider, connect } from "react-redux"
 import { composeWithDevTools } from "redux-devtools-extension"
 import rootReducer from "./reducers"
-import { setUser } from "./actions"
+import { setUser, clearUser } from "./actions"
 
 const store = createStore(rootReducer, composeWithDevTools())
 class Root extends React.Component {
@@ -21,11 +21,16 @@ class Root extends React.Component {
             if (user) {
                 this.props.setUser(user)
                 history.push("/")
+            } else {
+                this.props.clearUser()
+                history.push("/login")
             }
         })
     }
     render() {
-        return this.props.isLoading ? <Spinner /> : (
+        return this.props.isLoading ? (
+            <Spinner />
+        ) : (
             <Router history={history}>
                 <Switch>
                     <Route path='/' exact component={App} />
@@ -43,7 +48,7 @@ const mapStateToProps = state => ({
 
 const RootWithConnect = connect(
     mapStateToProps,
-    { setUser }
+    { setUser, clearUser }
 )(Root)
 ReactDOM.render(
     <Provider store={store}>

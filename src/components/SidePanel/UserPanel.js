@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import firebase from "../../firebase"
 import { Grid, Header, Icon, Dropdown } from "semantic-ui-react"
 class UserPanel extends Component {
     dropdownOptions = () => [
@@ -17,9 +18,17 @@ class UserPanel extends Component {
         },
         {
             key: "signout",
-            text: <span>Sign Out</span>
+            text: <span onClick={this.handleSignout}>Sign Out</span>
         }
     ]
+
+    handleSignout = () => {
+        firebase
+            .auth()
+            .signOut()
+            .then(() => console.log("signout"))
+    }
+
     render() {
         return (
             <Grid style={{ background: "#4c3c4c" }}>
@@ -37,7 +46,6 @@ class UserPanel extends Component {
                     <Header inverted style={{ padding: "0.25em" }} as='h4'>
                         <Dropdown trigger={<span>User</span>} options={this.dropdownOptions()} />
                     </Header>
-
                 </Grid.Column>
             </Grid>
         )
