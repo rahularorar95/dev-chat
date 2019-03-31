@@ -10,7 +10,8 @@ class Messages extends Component {
         messages: [],
         messagesLoading: true,
         channel: this.props.currentChannel,
-        user: this.props.currentUser
+        user: this.props.currentUser,
+        progressBar: false
     }
 
     componentDidMount() {
@@ -42,23 +43,22 @@ class Messages extends Component {
         })
     }
 
-    calculateHeight = () => {
-        return (
-            window.innerHeight -
-            60 -
-            document.querySelector(".message__form").clientHeight -
-            document.querySelector(".channel__header").clientHeight
-        )
+    isProgressBarVisible = uploadState => {
+        if (uploadState === "uploading") {
+            this.setState({ progressBar: true })
+        } else {
+            this.setState({ progressBar: false })
+        }
     }
 
     render() {
-        const { messagesRef, messages, channel, user } = this.state
+        const { messagesRef, messages, channel, user, progressBar } = this.state
         return (
             <>
                 <MessagesHeader />
 
                 <Segment>
-                    <Comment.Group className='messages'>
+                    <Comment.Group className={progressBar ? "messages__progress" : "messages"}>
                         {messages.length > 0 &&
                             messages.map(message => {
                                 return <Message key={message.timestamp} message={message} user={this.state.user} />
@@ -66,7 +66,12 @@ class Messages extends Component {
                     </Comment.Group>
                 </Segment>
 
-                <MessageForm messagesRef={messagesRef} currentChannel={channel} currentUser={user} />
+                <MessageForm
+                    messagesRef={messagesRef}
+                    currentChannel={channel}
+                    currentUser={user}
+                    isProgressBarVisible={this.isProgressBarVisible}
+                />
             </>
         )
     }

@@ -10,7 +10,13 @@ body,
 /* Messages */
 
 .messages {
-    height: 660px;
+    height: 70vh;
+    max-width: inherit !important;
+    overflow-y: scroll;
+}
+
+.messages__progress {
+    height: 68vh;
     max-width: inherit !important;
     overflow-y: scroll;
 }
@@ -31,4 +37,8 @@ body,
 
 .message__image {
     padding: 1em;
+}
+
+.progress__bar {
+    margin: 0.3em 0 0 0 !important;
 }
