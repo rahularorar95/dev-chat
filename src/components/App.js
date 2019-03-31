@@ -11,10 +11,14 @@ class App extends Component {
         return (
             <Grid columns='equal' className='app' style={{ background: "#f6f6f6" }}>
                 <ColorPanel />
-                <SidePanel currentUser={this.props.currentUser} />
+                <SidePanel key={this.props.currentUser && this.props.currentUser.uid} currentUser={this.props.currentUser} />
 
                 <Grid.Column style={{ marginLeft: 320 }}>
-                    <Messages />
+                    <Messages
+                        key={this.props.currentChannel && this.props.currentChannel.id}
+                        currentChannel={this.props.currentChannel}
+                        currentUser={this.props.currentUser}
+                    />
                 </Grid.Column>
 
                 <Grid.Column width={4}>
@@ -26,6 +30,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.user.currentUser
+    currentUser: state.user.currentUser,
+    currentChannel: state.channel.currentChannel
 })
 export default connect(mapStateToProps)(App)
