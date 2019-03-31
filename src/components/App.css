@@ -10,7 +10,8 @@ body,
 /* Messages */
 
 .messages {
-    height: 320px;
+    height: 660px;
+    max-width: inherit !important;
     overflow-y: scroll;
 }
 
@@ -23,8 +24,11 @@ body,
     z-index: 200;
 }
 
-
 .message__self {
     border-left: 2px solid orange;
     padding-left: 8px;
+}
+
+.message__image {
+    padding: 1em;
 }

@@ -42,6 +42,15 @@ class Messages extends Component {
         })
     }
 
+    calculateHeight = () => {
+        return (
+            window.innerHeight -
+            60 -
+            document.querySelector(".message__form").clientHeight -
+            document.querySelector(".channel__header").clientHeight
+        )
+    }
+
     render() {
         const { messagesRef, messages, channel, user } = this.state
         return (
@@ -49,11 +58,12 @@ class Messages extends Component {
                 <MessagesHeader />
 
                 <Segment>
-                    <Comment.Group className='messages'>{messages.length > 0 && (
-                        messages.map(message=>{
-                            return <Message key={message.timestamp} message={message} user={this.state.user} />
-                        })
-                    )}</Comment.Group>
+                    <Comment.Group className='messages'>
+                        {messages.length > 0 &&
+                            messages.map(message => {
+                                return <Message key={message.timestamp} message={message} user={this.state.user} />
+                            })}
+                    </Comment.Group>
                 </Segment>
 
                 <MessageForm messagesRef={messagesRef} currentChannel={channel} currentUser={user} />
