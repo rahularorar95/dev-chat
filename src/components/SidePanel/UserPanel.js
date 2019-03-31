@@ -11,7 +11,7 @@ class UserPanel extends Component {
             key: "user",
             text: (
                 <span>
-                    Signed in as <strong>{this.state.user.displayName}</strong>
+                    Signed in as <strong>{this.state.user && this.state.user.displayName}</strong>
                 </span>
             ),
             disabled: true
@@ -34,6 +34,7 @@ class UserPanel extends Component {
     }
 
     render() {
+        const { user } = this.state
         return (
             <Grid style={{ background: "#4c3c4c" }}>
                 <Grid.Column>
@@ -48,8 +49,8 @@ class UserPanel extends Component {
                             <Dropdown
                                 trigger={
                                     <span>
-                                        <Image src={this.state.user.photoURL} spaced='right' avatar />
-                                        {this.state.user.displayName}
+                                        <Image src={user && user.photoURL} spaced='right' avatar />
+                                        {user && user.displayName}
                                     </span>
                                 }
                                 options={this.dropdownOptions()}

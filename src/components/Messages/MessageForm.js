@@ -29,7 +29,6 @@ class MessageForm extends Component {
     sendMessage = () => {
         const { messagesRef } = this.props
         const { message, channel } = this.state
-        console.log(channel)
         if (message) {
             this.setState({ loading: true })
             messagesRef
