@@ -67,6 +67,7 @@ class MessageForm extends Component {
         }
     }
 
+    
     uploadFile = (file, metadata) => {
         const pathToUpload = this.state.channel.id
         const ref = this.props.messagesRef

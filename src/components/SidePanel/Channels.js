@@ -27,7 +27,7 @@ class Channels extends Component {
     removeListeners = () => {
         this.state.channelsRef.off()
     }
-    
+
     addListeners = () => {
         let loadedChannels = []
         this.state.channelsRef.on("child_added", snap => {
@@ -117,17 +117,16 @@ class Channels extends Component {
         const { channels, modal } = this.state
         return (
             <>
-                <Menu.Menu style={{ paddingBottom: "2em" }}>
+                <Menu.Menu className='menu'>
                     <Menu.Item>
                         <span>
                             <Icon name='exchange' /> CHANNELS
                         </span>{" "}
-                        ({channels.length}) <Icon name='add' inverted onClick={this.openModal} style={{cursor:'pointer'}}/>
+                        ({channels.length}) <Icon name='add' inverted onClick={this.openModal} style={{ cursor: "pointer" }} />
                     </Menu.Item>
 
                     {/* Channels */}
                     {this.displayChannels(channels)}
-
                 </Menu.Menu>
 
                 <Modal basic open={modal} onClose={this.closeModal}>
