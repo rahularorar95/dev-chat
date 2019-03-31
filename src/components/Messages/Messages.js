@@ -12,7 +12,10 @@ class Messages extends Component {
         channel: this.props.currentChannel,
         user: this.props.currentUser,
         progressBar: false,
-        numuniqueUsers: ""
+        numuniqueUsers: "",
+        searchTerm: "",
+        searchLoading: false,
+        searchResults: []
     }
 
     componentDidMount() {
@@ -45,6 +48,28 @@ class Messages extends Component {
             this.countUniqueUsers(loadedMessages)
         })
     }
+    handleSearchChange = event => {
+        this.setState({ searchTerm: event.target.value, searchLoading: true }, () => {
+            this.handleSearchMessages()
+        })
+    }
+
+    handleSearchMessages = () => {
+        const channelMessages = [...this.state.messages]
+        const regex = new RegExp(this.state.searchTerm, "gi")
+        const searchResults = channelMessages.reduce((acc, message) => {
+            if ((message.content && message.content.match(regex)) || message.user.name.match(regex)) {
+                acc.push(message)
+            }
+            return acc
+        }, [])
+
+        this.setState({ searchResults })
+
+        setTimeout(() => {
+            this.setState({ searchLoading: false })
+        }, 1000)
+    }
 
     countUniqueUsers = messages => {
         const uniqueUsers = messages.reduce((acc, message) => {
@@ -70,18 +95,36 @@ class Messages extends Component {
 
     displayChannelName = channel => (channel ? `#${channel.name}` : "")
 
+    displayMessages = messages =>
+        messages.length > 0 &&
+        messages.map(message => {
+            return <Message key={message.timestamp} message={message} user={this.state.user} />
+        })
+
     render() {
-        const { messagesRef, messages, channel, user, progressBar, numuniqueUsers } = this.state
+        const {
+            messagesRef,
+            messages,
+            channel,
+            user,
+            progressBar,
+            numuniqueUsers,
+            searchTerm,
+            searchResults,
+            searchLoading
+        } = this.state
         return (
             <>
-                <MessagesHeader channelName={this.displayChannelName(channel)} numuniqueUsers={numuniqueUsers} />
+                <MessagesHeader
+                    channelName={this.displayChannelName(channel)}
+                    numuniqueUsers={numuniqueUsers}
+                    handleSearchChange={this.handleSearchChange}
+                    searchLoading={searchLoading}
+                />
 
                 <Segment>
                     <Comment.Group className={progressBar ? "messages__progress" : "messages"}>
-                        {messages.length > 0 &&
-                            messages.map(message => {
-                                return <Message key={message.timestamp} message={message} user={this.state.user} />
-                            })}
+                        {searchTerm ? this.displayMessages(searchResults) : this.displayMessages(messages)}
                     </Comment.Group>
                 </Segment>
 
