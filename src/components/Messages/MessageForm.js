@@ -130,6 +130,7 @@ class MessageForm extends Component {
                 })
             })
     }
+
     render() {
         const { errors, message, loading, modal, percentUploaded, uploadState } = this.state
         return (
