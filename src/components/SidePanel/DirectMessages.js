@@ -20,6 +20,16 @@ class DirectMessages extends Component {
         }
     }
 
+    componentWillUnmount() {
+        this.removeListeners()
+    }
+
+    removeListeners = () => {
+        this.state.usersRef.off()
+        this.state.presenceRef.off()
+        this.state.connectedRef.off()
+    }
+
     addListeners = currentUserUid => {
         let loadedUsers = []
 
@@ -96,7 +106,7 @@ class DirectMessages extends Component {
             <Menu.Menu>
                 <Menu.Item>
                     <span>
-                        <Icon name='mail' />
+                        <Icon name="mail" />
                         DIRECT MESSAGES
                     </span>{" "}
                     ({users.length})
@@ -112,7 +122,8 @@ class DirectMessages extends Component {
                         style={{ opacity: 0.7, fontStyle: "italic" }}
                         active={user.uid === this.state.activeChannnel}
                     >
-                        <Icon name='circle' color={this.isOnline(user) ? "green" : "red"} /> @ {user.name}
+                        <Icon name="circle" color={this.isOnline(user) ? "green" : "red"} /> @{" "}
+                        {user.name}
                     </Menu.Item>
                 ))}
             </Menu.Menu>
