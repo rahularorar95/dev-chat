@@ -9,9 +9,12 @@ import "./App.css"
 class App extends Component {
     render() {
         return (
-            <Grid columns='equal' className='app' style={{ background: "#f6f6f6" }}>
+            <Grid columns="equal" className="app" style={{ background: "#f6f6f6" }}>
                 <ColorPanel />
-                <SidePanel key={this.props.currentUser && this.props.currentUser.uid} currentUser={this.props.currentUser} />
+                <SidePanel
+                    key={this.props.currentUser && this.props.currentUser.uid}
+                    currentUser={this.props.currentUser}
+                />
 
                 <Grid.Column style={{ marginLeft: 320 }}>
                     <Messages
@@ -23,7 +26,10 @@ class App extends Component {
                 </Grid.Column>
 
                 <Grid.Column width={4}>
-                    <MetaPanel />
+                    <MetaPanel
+                        key={this.props.currentChannel && this.props.currentChannel.id}
+                        isPrivateChannel={this.props.isPrivateChannel}
+                    />
                 </Grid.Column>
             </Grid>
         )
