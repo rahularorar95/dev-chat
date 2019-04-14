@@ -12,6 +12,7 @@ class Channels extends Component {
         channelName: "",
         channelDetails: "",
         channelsRef: firebase.database().ref("channels"),
+        typingRef: firebase.database().ref("typing"),
         modal: false,
         firstLoad: true
     }
@@ -92,6 +93,10 @@ class Channels extends Component {
 
     changeChannel = channel => {
         this.setActiveChannel(channel)
+        this.state.typingRef
+            .child(channel.id)
+            .child(this.state.user.uid)
+            .remove()
         this.props.setCurrentChannel(channel)
         this.props.setPrivateChannel(false)
     }
@@ -118,12 +123,18 @@ class Channels extends Component {
         const { channels, modal } = this.state
         return (
             <>
-                <Menu.Menu className='menu'>
+                <Menu.Menu className="menu">
                     <Menu.Item>
                         <span>
-                            <Icon name='exchange' /> CHANNELS
+                            <Icon name="exchange" /> CHANNELS
                         </span>{" "}
-                        ({channels.length}) <Icon name='add' inverted onClick={this.openModal} style={{ cursor: "pointer" }} />
+                        ({channels.length}){" "}
+                        <Icon
+                            name="add"
+                            inverted
+                            onClick={this.openModal}
+                            style={{ cursor: "pointer" }}
+                        />
                     </Menu.Item>
 
                     {/* Channels */}
@@ -135,20 +146,30 @@ class Channels extends Component {
                     <Modal.Content>
                         <Form onSubmit={this.handleSubmit}>
                             <Form.Field>
-                                <Input fluid label='Name of Channel' name='channelName' onChange={this.handleChange} />
+                                <Input
+                                    fluid
+                                    label="Name of Channel"
+                                    name="channelName"
+                                    onChange={this.handleChange}
+                                />
                                 <br />
-                                <Input fluid label='About the Channel' name='channelDetails' onChange={this.handleChange} />
+                                <Input
+                                    fluid
+                                    label="About the Channel"
+                                    name="channelDetails"
+                                    onChange={this.handleChange}
+                                />
                             </Form.Field>
                         </Form>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button color='green' inverted onClick={this.handleSubmit}>
-                            <Icon name='checkmark' />
+                        <Button color="green" inverted onClick={this.handleSubmit}>
+                            <Icon name="checkmark" />
                             Add
                         </Button>
 
-                        <Button color='red' inverted onClick={this.closeModal}>
-                            <Icon name='remove' />
+                        <Button color="red" inverted onClick={this.closeModal}>
+                            <Icon name="remove" />
                             Cancel
                         </Button>
                     </Modal.Actions>
