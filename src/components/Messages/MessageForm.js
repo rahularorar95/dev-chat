@@ -4,6 +4,8 @@ import firebase from "../../firebase"
 import FileModal from "./FileModal"
 import { Segment, Button, Input } from "semantic-ui-react"
 import ProgressBar from "./ProgressBar"
+import { Picker } from "emoji-mart"
+import "emoji-mart/css/emoji-mart.css"
 class MessageForm extends Component {
     state = {
         storageRef: firebase.storage().ref(),
@@ -16,7 +18,8 @@ class MessageForm extends Component {
         channel: this.props.currentChannel,
         errors: [],
         loading: false,
-        modal: false
+        modal: false,
+        emojiPicker: false
     }
 
     openModal = () => {
@@ -46,6 +49,19 @@ class MessageForm extends Component {
         }
     }
 
+    handleTogglePicker = () => {
+        this.setState({ emojiPicker: !this.state.emojiPicker })
+    }
+
+    handleAddEmoji = emoji => {
+        const oldMessage = this.state.message
+        console.log(emoji)
+        const newMessage = `${oldMessage} ${emoji.native}`
+        this.setState({ message: newMessage })
+
+        setTimeout(() => this.messageInputRef.focus(), 0)
+    }
+
     createMessage = (fileUrl = null) => {
         const message = {
             timestamp: firebase.database.ServerValue.TIMESTAMP,
@@ -73,7 +89,7 @@ class MessageForm extends Component {
                 .push()
                 .set(this.createMessage())
                 .then(() => {
-                    this.setState({ loading: false, message: "", errors: [] })
+                    this.setState({ loading: false, message: "", errors: [], emojiPicker: false })
                     typingRef
                         .child(channel.id)
                         .child(user.uid)
@@ -81,7 +97,11 @@ class MessageForm extends Component {
                 })
                 .catch(err => {
                     console.log(err)
-                    this.setState({ loading: false, errors: this.state.errors.concat(err) })
+                    this.setState({
+                        loading: false,
+                        emojiPicker: false,
+                        errors: this.state.errors.concat(err)
+                    })
                     typingRef
                         .child(channel.id)
                         .child(user.uid)
@@ -167,17 +187,41 @@ class MessageForm extends Component {
     }
 
     render() {
-        const { errors, message, loading, modal, percentUploaded, uploadState } = this.state
+        const {
+            errors,
+            message,
+            loading,
+            modal,
+            percentUploaded,
+            uploadState,
+            emojiPicker
+        } = this.state
         return (
             <Segment className="message__form">
+                {emojiPicker && (
+                    <Picker
+                        set="apple"
+                        onSelect={this.handleAddEmoji}
+                        className="emojipicker"
+                        title="Pick your emoji"
+                        emoji="point_up"
+                    />
+                )}
                 <Input
                     fluid
                     name="message"
                     onChange={this.handleChange}
                     onKeyDown={this.handleKeyDown}
+                    ref={node => (this.messageInputRef = node)}
                     value={message}
                     style={{ marginBottom: "0.7em" }}
-                    label={<Button icon={"add"} />}
+                    label={
+                        <Button
+                            icon={emojiPicker ? "close" : "add"}
+                            content={emojiPicker ? "Close" : null}
+                            onClick={this.handleTogglePicker}
+                        />
+                    }
                     labelPosition="left"
                     className={
                         errors.some(error => error.message.includes("message")) ? "error" : ""
