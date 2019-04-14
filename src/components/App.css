@@ -6,7 +6,6 @@ body,
     padding: 1em;
 }
 
-
 /* Messages */
 
 .messages {
@@ -45,4 +44,25 @@ body,
 
 .menu {
     padding-bottom: 2em;
+}
+
+/* Color Panel */
+
+.color__container {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    width: 35px;
+    border-radius: 3px;
+}
+
+.color__square {
+    width: 35px;
+    height: 35px;
+}
+
+.color__overlay {
+    width: 85px;
+    height: 35px;
+    transform: rotate(225deg);
 }

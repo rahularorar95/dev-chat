@@ -9,11 +9,15 @@ import "./App.css"
 class App extends Component {
     render() {
         return (
-            <Grid columns="equal" className="app" style={{ background: "#f6f6f6" }}>
-                <ColorPanel />
+            <Grid columns="equal" className="app" style={{ background: this.props.secondaryColor }}>
+                <ColorPanel
+                    key={this.props.currentUser && this.props.currentUser.name}
+                    currentUser={this.props.currentUser}
+                />
                 <SidePanel
                     key={this.props.currentUser && this.props.currentUser.uid}
                     currentUser={this.props.currentUser}
+                    primaryColor={this.props.primaryColor}
                 />
 
                 <Grid.Column style={{ marginLeft: 320 }}>
@@ -27,7 +31,7 @@ class App extends Component {
 
                 <Grid.Column width={4}>
                     <MetaPanel
-                        key={this.props.currentChannel && this.props.currentChannel.id}
+                        key={this.props.currentChannel && this.props.currentChannel.name}
                         currentChannel={this.props.currentChannel}
                         isPrivateChannel={this.props.isPrivateChannel}
                     />
@@ -40,6 +44,8 @@ class App extends Component {
 const mapStateToProps = state => ({
     currentUser: state.user.currentUser,
     currentChannel: state.channel.currentChannel,
-    isPrivateChannel: state.channel.isPrivateChannel
+    isPrivateChannel: state.channel.isPrivateChannel,
+    primaryColor: state.colors.primaryColor,
+    secondaryColor: state.colors.secondaryColor
 })
 export default connect(mapStateToProps)(App)
