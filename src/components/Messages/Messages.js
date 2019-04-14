@@ -4,6 +4,7 @@ import MessagesHeader from "./MessagesHeader"
 import MessageForm from "./MessageForm"
 import Message from "./Message"
 import Typing from "./Typing"
+import Skeleton from "./Skeleton"
 import { Segment, Comment } from "semantic-ui-react"
 class Messages extends Component {
     state = {
@@ -116,6 +117,7 @@ class Messages extends Component {
 
             this.countUniqueUsers(loadedMessages)
         })
+        this.setState({ messagesLoading: false })
     }
 
     getMessagesRef = () => {
@@ -175,11 +177,14 @@ class Messages extends Component {
         return channel ? `${this.state.privateChannel ? "@" : "#"}${channel.name}` : ""
     }
 
-    displayMessages = messages =>
-        messages.length > 0 &&
-        messages.map(message => {
-            return <Message key={message.timestamp} message={message} user={this.state.user} />
-        })
+    displayMessages = messages => {
+        return (
+            messages.length > 0 &&
+            messages.map(message => {
+                return <Message key={message.timestamp} message={message} user={this.state.user} />
+            })
+        )
+    }
 
     handleStar = () => {
         this.setState(
@@ -221,6 +226,15 @@ class Messages extends Component {
             </div>
         ))
 
+    displayMessagesSkeleton = loading =>
+        loading ? (
+            <>
+                {[...Array(10)].map((_, i) => (
+                    <Skeleton key={i} />
+                ))}
+            </>
+        ) : null
+
     render() {
         const {
             messagesRef,
@@ -234,7 +248,8 @@ class Messages extends Component {
             searchLoading,
             privateChannel,
             isChannelStarred,
-            typingUsers
+            typingUsers,
+            messagesLoading
         } = this.state
         return (
             <>
@@ -250,6 +265,7 @@ class Messages extends Component {
 
                 <Segment>
                     <Comment.Group className={progressBar ? "messages__progress" : "messages"}>
+                        {this.displayMessagesSkeleton(messagesLoading)}
                         {searchTerm
                             ? this.displayMessages(searchResults)
                             : this.displayMessages(messages)}
