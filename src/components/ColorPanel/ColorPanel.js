@@ -20,7 +20,9 @@ class ColorPanel extends Component {
         }
     }
     componentWillUnmount() {
-        this.removeListeners()
+        if (this.state.user) {
+            this.removeListeners()
+        }
     }
 
     removeListeners = () => {
