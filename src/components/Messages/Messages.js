@@ -12,7 +12,9 @@ class Messages extends Component {
         messages: [],
         messagesLoading: true,
         channel: this.props.currentChannel,
+        isChannelStarred: false,
         user: this.props.currentUser,
+        usersRef: firebase.database().ref("users"),
         progressBar: false,
         numuniqueUsers: "",
         searchTerm: "",
@@ -24,6 +26,7 @@ class Messages extends Component {
         const { channel, user } = this.state
         if (channel && user) {
             this.addListeners(channel.id)
+            this.addUsersStarsListener(channel.id, user.uid)
         }
     }
 
@@ -36,6 +39,20 @@ class Messages extends Component {
     }
     addListeners = channelId => {
         this.addMessageListener(channelId)
+    }
+
+    addUsersStarsListener = (channelId, userId) => {
+        this.state.usersRef
+            .child(userId)
+            .child("starred")
+            .once("value")
+            .then(data => {
+                if (data.val() !== null) {
+                    const channelIds = Object.keys(data.val())
+                    const prevStarred = channelIds.includes(channelId)
+                    this.setState({ isChannelStarred: prevStarred })
+                }
+            })
     }
 
     addMessageListener = channelId => {
@@ -67,7 +84,10 @@ class Messages extends Component {
         const channelMessages = [...this.state.messages]
         const regex = new RegExp(this.state.searchTerm, "gi")
         const searchResults = channelMessages.reduce((acc, message) => {
-            if ((message.content && message.content.match(regex)) || message.user.name.match(regex)) {
+            if (
+                (message.content && message.content.match(regex)) ||
+                message.user.name.match(regex)
+            ) {
                 acc.push(message)
             }
             return acc
@@ -112,6 +132,33 @@ class Messages extends Component {
             return <Message key={message.timestamp} message={message} user={this.state.user} />
         })
 
+    handleStar = () => {
+        this.setState(
+            prevState => ({
+                isChannelStarred: !prevState.isChannelStarred
+            }),
+            () => {
+                this.starChannel()
+            }
+        )
+    }
+
+    starChannel = () => {
+        if (this.state.isChannelStarred) {
+            this.state.usersRef.child(`${this.state.user.uid}/starred`).update({
+                [this.state.channel.id]: this.state.channel
+            })
+        } else {
+            this.state.usersRef
+                .child(`${this.state.user.uid}/starred`)
+                .child(this.state.channel.id)
+                .remove(err => {
+                    if (err !== null) {
+                        console.log(err)
+                    }
+                })
+        }
+    }
     render() {
         const {
             messagesRef,
@@ -123,7 +170,8 @@ class Messages extends Component {
             searchTerm,
             searchResults,
             searchLoading,
-            privateChannel
+            privateChannel,
+            isChannelStarred
         } = this.state
         return (
             <>
@@ -133,11 +181,15 @@ class Messages extends Component {
                     handleSearchChange={this.handleSearchChange}
                     searchLoading={searchLoading}
                     isPrivateChannel={privateChannel}
+                    handleStar={this.handleStar}
+                    isChannelStarred={isChannelStarred}
                 />
 
                 <Segment>
                     <Comment.Group className={progressBar ? "messages__progress" : "messages"}>
-                        {searchTerm ? this.displayMessages(searchResults) : this.displayMessages(messages)}
+                        {searchTerm
+                            ? this.displayMessages(searchResults)
+                            : this.displayMessages(messages)}
                     </Comment.Group>
                 </Segment>
 
