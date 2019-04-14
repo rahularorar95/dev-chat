@@ -38,7 +38,7 @@ class MetaPanel extends Component {
                         {channel && channel.details}
                     </Accordion.Content>
 
-                    <Accordion.Title
+                    {/* <Accordion.Title
                         active={activeIndex === 1}
                         index={1}
                         onClick={this.setActiveIndex}
@@ -48,11 +48,11 @@ class MetaPanel extends Component {
                         Top Posters
                     </Accordion.Title>
 
-                    <Accordion.Content active={activeIndex === 1}>Posters</Accordion.Content>
+                    <Accordion.Content active={activeIndex === 1}>Posters</Accordion.Content> */}
 
                     <Accordion.Title
-                        active={activeIndex === 2}
-                        index={2}
+                        active={activeIndex === 1}
+                        index={1}
                         onClick={this.setActiveIndex}
                     >
                         <Icon name="dropdown" />
@@ -60,7 +60,7 @@ class MetaPanel extends Component {
                         Created By
                     </Accordion.Title>
 
-                    <Accordion.Content active={activeIndex === 2}>
+                    <Accordion.Content active={activeIndex === 1}>
                         <Header as="h3">
                             <Image circular src={channel && channel.createdBy.avatar} />
                             {channel && channel.createdBy.name}
