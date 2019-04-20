@@ -9,7 +9,7 @@ body,
 /* Messages */
 
 .messages {
-    height: 70vh;
+    height: 65vh;
     max-width: inherit !important;
     overflow-y: scroll;
 }
