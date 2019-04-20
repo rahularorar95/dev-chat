@@ -2,8 +2,7 @@
 
 Live chat app for developers called DevChat, where users will be able to create channels, to send messages to other users on those channels, send media files, see when other users are typing, add emojis to their messages, favorite and unfavorite channels they like or dislike.
 
-### Live Preview
-https://devchatreact.herokuapp.com
+[Live Preview](https://devchatreact.herokuapp.com)
 
 ### Features
 
